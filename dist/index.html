@@ -467,25 +467,43 @@
       transition: transform .32s ease, filter .32s ease;
     }
     .product-card:hover .light-panel { transform: translateY(-6px); filter: brightness(1.08); }
-    .floor-stand {
-      position: absolute;
-      z-index: 1;
-      bottom: 21px;
-      width: 170px;
-      height: 15px;
-      border-radius: 50%;
-      background: #6b7069;
-      box-shadow: 0 6px 0 #1b1f1b;
+    .a-frame-render {
+      position: relative;
+      z-index: 2;
+      width: 250px;
+      height: 300px;
+      margin-bottom: 21px;
+      overflow: visible;
+      filter: drop-shadow(0 24px 20px rgba(0,0,0,.62));
+      transition: transform .32s ease, filter .32s ease;
     }
-    .floor-stand::before {
-      content: "";
-      position: absolute;
-      width: 8px;
-      height: 52px;
-      left: calc(50% - 4px);
-      bottom: 8px;
-      background: #60665f;
+    .product-card:hover .a-frame-render {
+      transform: translateY(-6px) scale(1.02);
+      filter: drop-shadow(0 30px 25px rgba(0,0,0,.72));
     }
+    .a-frame-side {
+      stroke: #080a09;
+      stroke-width: 11;
+      stroke-linejoin: round;
+    }
+    .a-frame-lit {
+      fill: #eef4df;
+      filter: drop-shadow(0 0 10px rgba(235,255,218,.32));
+    }
+    .a-frame-unlit { fill: #252a25; }
+    .a-frame-rail {
+      fill: none;
+      stroke: #171b18;
+      stroke-width: 9;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .a-frame-hinge { fill: #1b1f1c; stroke: #080a09; stroke-width: 4; }
+    .a-frame-brace { stroke: #656b65; stroke-width: 5; stroke-linecap: round; }
+    .a-frame-leaf-dark { fill: #4f6b50; opacity: .92; }
+    .a-frame-leaf-light { fill: #a9b995; opacity: .9; }
+    .a-frame-copy-line { stroke: rgba(44,68,44,.32); stroke-width: 3; stroke-linecap: round; }
+    .a-frame-glow { fill: rgba(197,222,173,.13); }
     .product-badge {
       position: absolute;
       z-index: 4;
@@ -622,6 +640,11 @@
       margin-bottom: 105px;
       transform: scale(1.45);
     }
+    .detail-visual .a-frame-render {
+      width: 380px;
+      height: 455px;
+      margin-bottom: 55px;
+    }
     .detail-content { padding: 38px 0; }
     .detail-content h1 {
       margin: 18px 0;
@@ -732,6 +755,7 @@
       .detail-grid { grid-template-columns: 1fr; }
       .detail-visual, .detail-visual .product-visual { min-height: 430px; height: 430px; }
       .detail-visual .light-panel { margin-bottom: 75px; transform: scale(1.05); }
+      .detail-visual .a-frame-render { width: 270px; height: 325px; margin-bottom: 38px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -749,7 +773,7 @@
         <a href="#guide">Как выбрать</a>
         <a href="#contact">Контакты</a>
       </nav>
-      <button class="header-action consult-button" type="button">Консультация ↗</button>
+      <button class="header-action consult-button" type="button">Консультация →</button>
     </div>
   </header>
 
@@ -761,7 +785,7 @@
           <h1>Решения для бизнеса, которые <span>привлекают внимание</span></h1>
           <p class="hero-lead">Форматы для рекламы, меню, навигации и интерьерных изображений. Выберите размер — мы поможем с остальными деталями.</p>
           <div class="button-row">
-            <a class="primary" href="#catalog">Выбрать формат <span>↗</span></a>
+            <a class="primary" href="#catalog">Выбрать формат <span>→</span></a>
             <button class="secondary consult-button" type="button">Задать вопрос</button>
           </div>
         </div>
@@ -844,7 +868,7 @@
         <h2>Расскажите, где будет стоять панель</h2>
         <p>Подготовим обращение с выбранным форматом. Стоимость и комплектацию можно уточнить у менеджера.</p>
       </div>
-      <button class="primary consult-button" type="button">Получить консультацию <span>↗</span></button>
+      <button class="primary consult-button" type="button">Получить консультацию <span>→</span></button>
     </section>
   </main>
 
@@ -864,7 +888,7 @@
       <h2 id="dialog-title">Получить консультацию</h2>
       <p>Контакты продавца пока не добавлены. Скопируйте готовый текст и передайте его менеджеру удобным способом.</p>
       <textarea id="contact-message" aria-label="Текст обращения"></textarea>
-      <button class="primary" id="copy-message" type="button">Скопировать текст <span>↗</span></button>
+      <button class="primary" id="copy-message" type="button">Скопировать текст <span>→</span></button>
       <p id="copy-status" role="status"></p>
     </div>
   </dialog>
@@ -876,19 +900,45 @@
       { id: "a3", name: "Световая панель A3", size: "31,2 × 42,7 см", label: "A3", type: "wall", width: 126, height: 173, theme: 3 },
       { id: "a4", name: "Световая панель A4", size: "22,4 × 30,4 см", label: "A4", type: "wall", width: 106, height: 144, theme: 4 },
       { id: "60x120", name: "Световая панель 60 × 120", size: "60 × 120 см", label: "60 × 120", type: "wall", width: 124, height: 248, theme: 2 },
-      { id: "stand", name: "Напольная стойка", size: "60 × 90 см", label: "Стойка", type: "floor", width: 145, height: 218, theme: 1 },
+      { id: "stand", name: "Односторонняя напольная стойка", size: "60 × 90 см", label: "Односторонняя", type: "floor", width: 145, height: 218, theme: 1 },
       { id: "stand-double", name: "Двусторонняя напольная стойка", size: "60 × 90 см", label: "Двусторонняя", type: "floor", width: 145, height: 218, theme: 3, double: true }
     ];
 
+    function standMarkup(product) {
+      var rearClass = product.double ? "a-frame-side a-frame-lit" : "a-frame-side a-frame-unlit";
+      var rearArtwork = product.double
+        ? '<ellipse class="a-frame-leaf-light" cx="172" cy="105" rx="24" ry="52" transform="rotate(22 172 105)"></ellipse>' +
+          '<ellipse class="a-frame-leaf-dark" cx="176" cy="166" rx="20" ry="43" transform="rotate(-16 176 166)"></ellipse>'
+        : '<path class="a-frame-rail" d="M145 73 L202 83 M153 211 L213 229"></path>';
+      return '<svg class="a-frame-render" viewBox="0 0 260 300" role="img" aria-label="Складная А-образная ' + (product.double ? 'двусторонняя' : 'односторонняя') + ' стойка">' +
+        '<ellipse class="a-frame-glow" cx="130" cy="266" rx="112" ry="22"></ellipse>' +
+        '<polygon class="' + rearClass + '" points="125,38 188,50 218,244 151,225"></polygon>' +
+        rearArtwork +
+        '<line class="a-frame-brace" x1="122" y1="180" x2="193" y2="196"></line>' +
+        '<line class="a-frame-rail" x1="207" y1="226" x2="222" y2="278"></line>' +
+        '<polygon class="a-frame-side a-frame-lit" points="61,49 126,34 153,226 31,258"></polygon>' +
+        '<ellipse class="a-frame-leaf-light" cx="96" cy="105" rx="29" ry="66" transform="rotate(-24 96 105)"></ellipse>' +
+        '<ellipse class="a-frame-leaf-dark" cx="91" cy="180" rx="25" ry="55" transform="rotate(26 91 180)"></ellipse>' +
+        '<line class="a-frame-copy-line" x1="67" y1="225" x2="126" y2="210"></line>' +
+        '<line class="a-frame-copy-line" x1="63" y1="236" x2="119" y2="222"></line>' +
+        '<path class="a-frame-rail" d="M61 49 L126 34 L153 226 L31 258 Z"></path>' +
+        '<line class="a-frame-rail" x1="42" y1="249" x2="34" y2="282"></line>' +
+        '<rect class="a-frame-hinge" x="111" y="27" width="44" height="13" rx="3" transform="rotate(4 133 33)"></rect>' +
+      '</svg>';
+    }
+
     function panelMarkup(product) {
-      var stand = product.type === "floor" ? '<span class="floor-stand"></span>' : "";
-      var doubleBadge = product.double ? '<span class="product-badge">Две стороны</span>' : '<span class="product-badge">' + product.label + '</span>';
+      var productBadge = product.type === "floor"
+        ? '<span class="product-badge">' + (product.double ? 'Две светящиеся стороны' : 'Одна светящаяся сторона') + '</span>'
+        : '<span class="product-badge">' + product.label + '</span>';
+      if (product.type === "floor") {
+        return '<div class="product-visual">' + productBadge + standMarkup(product) + '</div>';
+      }
       return '<div class="product-visual">' +
-        doubleBadge +
+        productBadge +
         '<div class="light-panel" style="--panel-w:' + product.width + 'px;--panel-h:' + product.height + 'px">' +
           '<div class="poster theme-' + product.theme + '"><i class="poster-vein"></i></div>' +
         '</div>' +
-        stand +
       '</div>';
     }
 
@@ -897,7 +947,7 @@
         panelMarkup(product) +
         '<div class="product-info">' +
           '<div><h3>' + product.name + '</h3><p>' + product.size + '</p></div>' +
-          '<span class="round-arrow">↗</span>' +
+          '<span class="round-arrow">→</span>' +
         '</div>' +
       '</a>';
     }
@@ -982,10 +1032,13 @@
       detail.classList.remove("hidden");
       var typeLabel = product.type === "floor" ? "Напольное решение" : "Световая панель";
       var description = product.double
-        ? "Двусторонняя напольная стойка для размещения информации с двух направлений. Подходит для проходных пространств, входных зон и мероприятий."
+        ? "Складная А-образная напольная стойка с двумя светящимися панелями. Информация видна с двух направлений — это удобно для проходных пространств, входных зон и мероприятий."
         : product.type === "floor"
-          ? "Напольная стойка для размещения рекламного или информационного изображения. Подходит для входных зон, мероприятий и торговых пространств."
+          ? "Складная А-образная напольная стойка с одной светящейся панелью и опорной задней рамой. Подходит для размещения у стены, у входа или вдоль направления движения посетителей."
           : "Световая панель формата " + product.label + " для рекламного изображения, меню или информационного материала.";
+      var sidesSpec = product.type === "floor"
+        ? '<div class="spec"><span>Светящиеся стороны</span><strong>' + (product.double ? 'Две' : 'Одна') + '</strong></div>'
+        : '';
 
       detail.innerHTML =
         '<div class="shell">' +
@@ -999,10 +1052,11 @@
               '<div class="specs">' +
                 '<div class="spec"><span>Размер</span><strong>' + product.size + '</strong></div>' +
                 '<div class="spec"><span>Тип</span><span>' + typeLabel + '</span></div>' +
+                sidesSpec +
                 '<div class="spec"><span>Стоимость</span><span>Уточняется при заказе</span></div>' +
               '</div>' +
               '<div class="button-row">' +
-                '<button class="primary" id="order-product" type="button">Заказать <span>↗</span></button>' +
+                '<button class="primary" id="order-product" type="button">Заказать <span>→</span></button>' +
                 '<button class="secondary" id="consult-product" type="button">Консультация</button>' +
               '</div>' +
               '<p class="detail-note">Визуализация показывает пропорции формата. Характеристики, внешний вид и комплектация уточняются при заказе.</p>' +
