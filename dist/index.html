@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Световые короба LUMO: форматы A1, A2, A3, A4, 60 × 120 см и напольные стойки 60 × 90 см.">
+  <meta name="description" content="Световые панели LUMO: форматы A1, A2, A3, A4, 60 × 120 см и напольные стойки 60 × 90 см.">
   <meta name="theme-color" content="#090b0a">
-  <title>LUMO — световые короба</title>
+  <title>LUMO — световые панели</title>
   <style>
     :root {
       --bg: #090b0a;
@@ -788,7 +788,7 @@
 
     <section class="assurance" aria-label="Основные категории">
       <div class="shell assurance-inner">
-        <div class="assurance-item"><span class="assurance-icon">01</span><span>Настенные световые короба</span></div>
+        <div class="assurance-item"><span class="assurance-icon">01</span><span>Настенные световые панели</span></div>
         <div class="assurance-item"><span class="assurance-icon">02</span><span>Форматы от A4 до 60 × 120 см</span></div>
         <div class="assurance-item"><span class="assurance-icon">03</span><span>Одно- и двусторонние стойки</span></div>
       </div>
@@ -806,7 +806,7 @@
 
         <div class="filters" aria-label="Фильтр каталога">
           <button class="filter active" type="button" data-filter="all">Все позиции · 07</button>
-          <button class="filter" type="button" data-filter="wall">Световые короба</button>
+          <button class="filter" type="button" data-filter="wall">Световые панели</button>
           <button class="filter" type="button" data-filter="floor">Напольные стойки</button>
         </div>
 
@@ -853,7 +853,7 @@
   <footer class="site-footer">
     <div class="shell footer-inner">
       <a class="logo" href="#">LUM<span class="logo-dot">O</span></a>
-      <div class="footer-copy">Световые короба и напольные стойки<br>Визуализации показывают формат и представлены для примера</div>
+      <div class="footer-copy">Световые панели и напольные стойки<br>Визуализации показывают формат и представлены для примера</div>
     </div>
   </footer>
 
@@ -871,11 +871,11 @@
 
   <script>
     var products = [
-      { id: "a1", name: "Световой короб A1", size: "60,5 × 85 см", label: "A1", type: "wall", width: 155, height: 218, theme: 1 },
-      { id: "a2", name: "Световой короб A2", size: "43,5 × 60 см", label: "A2", type: "wall", width: 140, height: 193, theme: 2 },
-      { id: "a3", name: "Световой короб A3", size: "31,2 × 42,7 см", label: "A3", type: "wall", width: 126, height: 173, theme: 3 },
-      { id: "a4", name: "Световой короб A4", size: "22,4 × 30,4 см", label: "A4", type: "wall", width: 106, height: 144, theme: 4 },
-      { id: "60x120", name: "Световой короб 60 × 120", size: "60 × 120 см", label: "60 × 120", type: "wall", width: 124, height: 248, theme: 2 },
+      { id: "a1", name: "Световая панель A1", size: "60,5 × 85 см", label: "A1", type: "wall", width: 155, height: 218, theme: 1 },
+      { id: "a2", name: "Световая панель A2", size: "43,5 × 60 см", label: "A2", type: "wall", width: 140, height: 193, theme: 2 },
+      { id: "a3", name: "Световая панель A3", size: "31,2 × 42,7 см", label: "A3", type: "wall", width: 126, height: 173, theme: 3 },
+      { id: "a4", name: "Световая панель A4", size: "22,4 × 30,4 см", label: "A4", type: "wall", width: 106, height: 144, theme: 4 },
+      { id: "60x120", name: "Световая панель 60 × 120", size: "60 × 120 см", label: "60 × 120", type: "wall", width: 124, height: 248, theme: 2 },
       { id: "stand", name: "Напольная стойка", size: "60 × 90 см", label: "Стойка", type: "floor", width: 145, height: 218, theme: 1 },
       { id: "stand-double", name: "Двусторонняя напольная стойка", size: "60 × 90 см", label: "Двусторонняя", type: "floor", width: 145, height: 218, theme: 3, double: true }
     ];
@@ -923,14 +923,14 @@
 
     function openContact(mode, product) {
       var dialog = document.getElementById("contact-dialog");
-      var title = mode === "order" ? "Заказать световой короб" : "Получить консультацию";
+      var title = mode === "order" ? "Заказать световую панель" : "Получить консультацию";
       var message;
       if (mode === "order" && product) {
         message = "Здравствуйте! Хочу заказать: " + product.name + ", размер " + product.size + ". Подскажите стоимость, комплектацию и срок изготовления.";
       } else if (product) {
         message = "Здравствуйте! Нужна консультация по позиции «" + product.name + "», размер " + product.size + ". Помогите уточнить подходящую комплектацию.";
       } else {
-        message = "Здравствуйте! Нужна консультация по выбору светового короба. Подскажите, какой формат подойдёт для моего пространства.";
+        message = "Здравствуйте! Нужна консультация по выбору световой панели. Подскажите, какой формат подойдёт для моего пространства.";
       }
       document.getElementById("dialog-title").textContent = title;
       document.getElementById("contact-message").value = message;
@@ -980,12 +980,12 @@
 
       home.classList.add("hidden");
       detail.classList.remove("hidden");
-      var typeLabel = product.type === "floor" ? "Напольное решение" : "Световой короб";
+      var typeLabel = product.type === "floor" ? "Напольное решение" : "Световая панель";
       var description = product.double
         ? "Двусторонняя напольная стойка для размещения информации с двух направлений. Подходит для проходных пространств, входных зон и мероприятий."
         : product.type === "floor"
           ? "Напольная стойка для размещения рекламного или информационного изображения. Подходит для входных зон, мероприятий и торговых пространств."
-          : "Световой короб формата " + product.label + " для рекламного изображения, меню или информационного материала.";
+          : "Световая панель формата " + product.label + " для рекламного изображения, меню или информационного материала.";
 
       detail.innerHTML =
         '<div class="shell">' +
