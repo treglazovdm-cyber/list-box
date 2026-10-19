@@ -35,6 +35,7 @@
     button, textarea { font: inherit; }
     button { color: inherit; }
     img { max-width: 100%; }
+    [hidden] { display: none !important; }
     .hidden { display: none !important; }
     .shell { width: min(1440px, calc(100% - 64px)); margin: 0 auto; }
     .eyebrow {
@@ -668,12 +669,14 @@
 
     dialog {
       width: min(540px, calc(100% - 30px));
+      max-height: calc(100vh - 30px);
       padding: 0;
       border: 1px solid var(--line);
       border-radius: 22px;
       background: #111511;
       color: var(--text);
       box-shadow: 0 30px 100px rgba(0,0,0,.72);
+      overflow-y: auto;
     }
     dialog::backdrop { background: rgba(0,0,0,.78); backdrop-filter: blur(8px); }
     .dialog-inner { padding: 34px; }
@@ -690,12 +693,29 @@
     }
     dialog h2 { margin: 18px 0 10px; font-size: 32px; font-weight: 400; letter-spacing: -.04em; }
     dialog p { color: var(--muted); line-height: 1.6; font-size: 14px; }
-    textarea {
+    .request-product {
+      margin: 22px 0;
+      padding: 15px 17px;
+      border: 1px solid rgba(183,209,156,.25);
+      border-radius: 14px;
+      background: rgba(183,209,156,.06);
+    }
+    .request-product strong, .request-product span { display: block; }
+    .request-product strong { font-size: 15px; }
+    .request-product span { margin-top: 5px; color: var(--muted); font-size: 12px; }
+    .request-form { margin-top: 22px; }
+    .request-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+    .request-field { display: block; margin-bottom: 15px; }
+    .request-field > span {
+      display: block;
+      margin-bottom: 8px;
+      color: #d8ddd5;
+      font-size: 12px;
+    }
+    .request-form input, .request-form textarea {
       width: 100%;
-      min-height: 125px;
-      resize: vertical;
-      margin: 12px 0 18px;
-      padding: 15px;
+      min-height: 50px;
+      padding: 13px 14px;
       border: 1px solid var(--line);
       border-radius: 12px;
       outline: none;
@@ -703,10 +723,33 @@
       color: var(--text);
       line-height: 1.5;
     }
-    textarea:focus { border-color: var(--green); }
-    #copy-status { min-height: 20px; margin-bottom: 0; color: var(--green); }
+    .request-form textarea { min-height: 100px; resize: vertical; }
+    .request-form input:focus, .request-form textarea:focus { border-color: var(--green); }
+    .request-form .primary { width: 100%; margin-top: 3px; }
+    .request-form .primary:disabled { opacity: .6; cursor: wait; transform: none; }
+    .request-note { margin: 12px 0 0; font-size: 11px !important; }
+    #request-status { min-height: 22px; margin: 12px 0 0; }
+    #request-status[data-state="error"] { color: #ef9f91; }
+    #request-status[data-state="success"] { color: var(--green); }
+    .request-success {
+      padding: 26px 0 5px;
+      text-align: center;
+    }
+    .request-success-mark {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      background: var(--green);
+      color: #0a0d0a;
+      font-size: 28px;
+    }
+    .request-success h3 { margin: 0 0 8px; font-size: 24px; font-weight: 500; }
+    .honeypot { position: absolute !important; left: -10000px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; }
 
-    a:focus-visible, button:focus-visible, textarea:focus-visible {
+    a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible {
       outline: 3px solid var(--green);
       outline-offset: 4px;
     }
@@ -756,6 +799,8 @@
       .detail-visual, .detail-visual .product-visual { min-height: 430px; height: 430px; }
       .detail-visual .light-panel { margin-bottom: 75px; transform: scale(1.05); }
       .detail-visual .a-frame-render { width: 270px; height: 325px; margin-bottom: 38px; }
+      .dialog-inner { padding: 28px 22px; }
+      .request-grid { grid-template-columns: 1fr; gap: 0; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -886,10 +931,43 @@
       <button class="dialog-close" type="button" aria-label="Закрыть">×</button>
       <div class="eyebrow">Обращение</div>
       <h2 id="dialog-title">Получить консультацию</h2>
-      <p>Контакты продавца пока не добавлены. Скопируйте готовый текст и передайте его менеджеру удобным способом.</p>
-      <textarea id="contact-message" aria-label="Текст обращения"></textarea>
-      <button class="primary" id="copy-message" type="button">Скопировать текст <span>→</span></button>
-      <p id="copy-status" role="status"></p>
+      <p id="dialog-description">Оставьте контакты — менеджер свяжется с вами, уточнит задачу и рассчитает стоимость.</p>
+      <div class="request-product" id="request-product" hidden>
+        <strong id="request-product-name"></strong>
+        <span id="request-product-size"></span>
+      </div>
+      <form class="request-form" id="request-form">
+        <input type="hidden" id="request-type" name="request_type" value="consultation">
+        <input type="hidden" id="request-product-id" name="product_id" value="">
+        <div class="request-grid">
+          <label class="request-field">
+            <span>Ваше имя</span>
+            <input id="request-name" name="name" type="text" autocomplete="name" maxlength="80" required placeholder="Как к вам обращаться">
+          </label>
+          <label class="request-field">
+            <span>Телефон</span>
+            <input id="request-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" maxlength="40" required placeholder="+7 999 000-00-00">
+          </label>
+        </div>
+        <label class="request-field" id="quantity-field" hidden>
+          <span>Количество</span>
+          <input id="request-quantity" name="quantity" type="number" min="1" max="100" step="1" value="1">
+        </label>
+        <label class="request-field">
+          <span>Комментарий</span>
+          <textarea id="request-comment" name="comment" maxlength="1200" placeholder="Например: нужна доставка, установка или помощь с макетом"></textarea>
+        </label>
+        <label class="honeypot" aria-hidden="true">Ваш сайт<input id="request-website" name="website" type="text" tabindex="-1" autocomplete="off"></label>
+        <button class="primary" id="request-submit" type="submit">Отправить заявку <span>→</span></button>
+        <p class="request-note">Нажимая кнопку, вы разрешаете использовать указанные контакты для ответа на заявку.</p>
+        <p id="request-status" role="status" aria-live="polite"></p>
+      </form>
+      <div class="request-success" id="request-success" hidden>
+        <div class="request-success-mark">✓</div>
+        <h3>Заявка отправлена</h3>
+        <p id="request-success-text">Менеджер свяжется с вами для уточнения деталей.</p>
+        <button class="secondary dialog-success-close" type="button">Закрыть</button>
+      </div>
     </div>
   </dialog>
 
@@ -973,20 +1051,30 @@
 
     function openContact(mode, product) {
       var dialog = document.getElementById("contact-dialog");
-      var title = mode === "order" ? "Заказать световую панель" : "Получить консультацию";
-      var message;
-      if (mode === "order" && product) {
-        message = "Здравствуйте! Хочу заказать: " + product.name + ", размер " + product.size + ". Подскажите стоимость, комплектацию и срок изготовления.";
-      } else if (product) {
-        message = "Здравствуйте! Нужна консультация по позиции «" + product.name + "», размер " + product.size + ". Помогите уточнить подходящую комплектацию.";
-      } else {
-        message = "Здравствуйте! Нужна консультация по выбору световой панели. Подскажите, какой формат подойдёт для моего пространства.";
+      var isOrder = mode === "order" && product;
+      var form = document.getElementById("request-form");
+      var productBox = document.getElementById("request-product");
+      form.reset();
+      form.hidden = false;
+      document.getElementById("request-success").hidden = true;
+      document.getElementById("request-status").textContent = "";
+      document.getElementById("request-status").removeAttribute("data-state");
+      document.getElementById("request-type").value = isOrder ? "order" : "consultation";
+      document.getElementById("request-product-id").value = product ? product.id : "";
+      document.getElementById("dialog-title").textContent = isOrder ? "Заказать панель" : "Получить консультацию";
+      document.getElementById("dialog-description").textContent = isOrder
+        ? "Оставьте контакты — менеджер уточнит комплектацию, рассчитает стоимость и срок изготовления."
+        : "Оставьте контакты — менеджер поможет выбрать формат и ответит на вопросы.";
+      document.getElementById("quantity-field").hidden = !isOrder;
+      document.getElementById("request-quantity").required = isOrder;
+      productBox.hidden = !product;
+      if (product) {
+        document.getElementById("request-product-name").textContent = product.name;
+        document.getElementById("request-product-size").textContent = product.size;
       }
-      document.getElementById("dialog-title").textContent = title;
-      document.getElementById("contact-message").value = message;
-      document.getElementById("copy-status").textContent = "";
       dialog.showModal();
       document.body.classList.add("modal-open");
+      window.setTimeout(function() { document.getElementById("request-name").focus(); }, 50);
     }
 
     document.querySelectorAll(".consult-button").forEach(function(button) {
@@ -997,6 +1085,9 @@
     document.querySelector(".dialog-close").addEventListener("click", function() {
       dialog.close();
     });
+    document.querySelector(".dialog-success-close").addEventListener("click", function() {
+      dialog.close();
+    });
     dialog.addEventListener("close", function() {
       document.body.classList.remove("modal-open");
     });
@@ -1004,14 +1095,45 @@
       if (event.target === dialog) dialog.close();
     });
 
-    document.getElementById("copy-message").addEventListener("click", function() {
-      var field = document.getElementById("contact-message");
-      var status = document.getElementById("copy-status");
-      navigator.clipboard.writeText(field.value).then(function() {
-        status.textContent = "Текст скопирован.";
-      }).catch(function() {
-        field.select();
-        status.textContent = "Текст выделен — нажмите Ctrl+C.";
+    document.getElementById("request-form").addEventListener("submit", function(event) {
+      event.preventDefault();
+      var form = event.currentTarget;
+      var submit = document.getElementById("request-submit");
+      var status = document.getElementById("request-status");
+      var payload = {
+        request_type: document.getElementById("request-type").value,
+        product_id: document.getElementById("request-product-id").value,
+        name: document.getElementById("request-name").value.trim(),
+        phone: document.getElementById("request-phone").value.trim(),
+        quantity: Number(document.getElementById("request-quantity").value || 1),
+        comment: document.getElementById("request-comment").value.trim(),
+        website: document.getElementById("request-website").value
+      };
+      submit.disabled = true;
+      submit.firstChild.nodeValue = "Отправляем... ";
+      status.textContent = "";
+      status.removeAttribute("data-state");
+      fetch("/api/site-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      }).then(function(response) {
+        return response.json().catch(function() { return {}; }).then(function(data) {
+          if (!response.ok) throw new Error(data.error || "Не удалось отправить заявку. Попробуйте ещё раз.");
+          return data;
+        });
+      }).then(function(data) {
+        form.hidden = true;
+        document.getElementById("request-success").hidden = false;
+        document.getElementById("request-success-text").textContent = data.request_id
+          ? "Номер заявки: " + data.request_id + ". Менеджер свяжется с вами для уточнения деталей."
+          : "Менеджер свяжется с вами для уточнения деталей.";
+      }).catch(function(error) {
+        status.textContent = error.message;
+        status.setAttribute("data-state", "error");
+      }).finally(function() {
+        submit.disabled = false;
+        submit.firstChild.nodeValue = "Отправить заявку ";
       });
     });
 
