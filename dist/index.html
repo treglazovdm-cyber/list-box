@@ -810,7 +810,7 @@
       *, *::before, *::after { transition-duration: .01ms !important; }
     }
   </style>
-</head>
+<style>.product-grid .published-card:nth-child(n){grid-column:auto}.published-card{padding:12px;border-radius:4px}.published-card .product-info{padding:16px 0 4px}.published-card .photo-trigger img{width:100%;height:auto;border-radius:0}</style></head>
 <body>
   <header class="site-header">
     <div class="shell header-inner">
@@ -1025,7 +1025,7 @@
     function publicEscape(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function(ch) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]; }); }
     function cardMarkup(product) {
       if (product.sku) {
-        return '<a class="product-card" href="' + publicEscape(product.url) + '"><div class="product-visual"><img src="' + publicEscape(product.photos[0]) + '" alt="' + publicEscape(product.title) + '" loading="lazy" style="width:100%;height:340px;object-fit:contain"></div><div class="product-info"><div><h3>' + publicEscape(product.title) + '</h3><p>Артикул: ' + publicEscape(product.sku) + '</p><p>' + (product.price ? new Intl.NumberFormat("ru-RU", {style:"currency",currency:"RUB"}).format(product.price) : "Стоимость по запросу") + '</p></div><span class="round-arrow">→</span></div></a>';
+        return '<article class="product-card published-card"><button type="button" class="photo-trigger" data-photo-zoom aria-label="Увеличить фото: ' + publicEscape(product.title) + '"><img src="' + publicEscape(product.photos[0]) + '" alt="' + publicEscape(product.title) + '" loading="lazy"></button><a class="product-info" href="' + publicEscape(product.url) + '"><div><h3>' + publicEscape(product.title) + '</h3><p>Артикул: ' + publicEscape(product.sku) + '</p><p>' + (product.price ? new Intl.NumberFormat("ru-RU", {style:"currency",currency:"RUB"}).format(product.price) : "Стоимость по запросу") + '</p><span>Подробнее →</span></div><span class="round-arrow">→</span></a></article>';
       }
       return '<a class="product-card" href="#product/' + product.id + '" aria-label="' + product.name + ', ' + product.size + '">' +
         panelMarkup(product) +
@@ -1214,5 +1214,12 @@
       if (/^#product\//.test(window.location.hash)) window.location.replace("/catalog/");
     }).catch(function() { /* Static catalogue remains available during initial connection. */ });
   </script>
+<style>
+.photo-trigger{display:block;width:100%;padding:0;margin:0;border:0;border-radius:0;background:transparent;cursor:zoom-in;color:inherit;overflow:visible}.photo-trigger img{display:block;width:100%;height:auto;max-height:none;object-fit:contain;border-radius:0}.photo-trigger:focus-visible{outline:3px solid #c4dca9;outline-offset:4px}.photo-viewer{width:96vw;max-width:1400px;max-height:96dvh;margin:auto;padding:12px;border:0;border-radius:0;background:#0b0e0b;color:#fff;overflow:auto}.photo-viewer::backdrop{background:rgba(0,0,0,.92)}.photo-viewer .viewer-tools{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:10px}.photo-viewer button{width:auto;margin:0;padding:10px 16px;background:#253020;color:#fff;border:1px solid #76846e;border-radius:4px;cursor:pointer;font:inherit}.photo-viewer .viewer-image{display:block;max-width:100%;max-height:78dvh;width:auto;height:auto;margin:auto;object-fit:contain;border-radius:0}.photo-viewer .viewer-controls{display:flex;justify-content:center;gap:12px;margin-top:10px}
+</style>
+<dialog id="photo-viewer" class="photo-viewer" aria-label="Просмотр фотографий"><div class="viewer-tools"><span id="viewer-caption" aria-live="polite"></span><button type="button" id="viewer-close" autofocus aria-label="Закрыть просмотр">Закрыть ×</button></div><img id="viewer-image" class="viewer-image" alt=""><div class="viewer-controls"><button type="button" id="viewer-prev" aria-label="Предыдущая фотография">← Назад</button><button type="button" id="viewer-next" aria-label="Следующая фотография">Далее →</button></div></dialog>
+<script>
+(function(){const dialog=document.getElementById('photo-viewer'),image=document.getElementById('viewer-image'),caption=document.getElementById('viewer-caption');let photos=[],index=0,overflow='';function show(){const button=photos[index],img=button.querySelector('img');image.src=img.currentSrc||img.src;image.alt=img.alt;caption.textContent=(index+1)+' / '+photos.length+' · '+img.alt;document.getElementById('viewer-prev').hidden=photos.length<2;document.getElementById('viewer-next').hidden=photos.length<2}function move(delta){index=(index+delta+photos.length)%photos.length;show()}document.addEventListener('click',function(e){const button=e.target.closest('[data-photo-zoom]');if(!button)return;e.preventDefault();const group=button.closest('.gallery')||button.closest('.product-grid')||button.closest('.grid')||document;photos=Array.from(group.querySelectorAll('[data-photo-zoom]'));index=photos.indexOf(button);show();overflow=document.body.style.overflow;document.body.style.overflow='hidden';dialog.showModal()});document.getElementById('viewer-close').onclick=function(){dialog.close()};document.getElementById('viewer-prev').onclick=function(){move(-1)};document.getElementById('viewer-next').onclick=function(){move(1)};dialog.addEventListener('click',function(e){if(e.target===dialog)dialog.close()});dialog.addEventListener('keydown',function(e){if(e.key==='ArrowLeft'){e.preventDefault();move(-1)}if(e.key==='ArrowRight'){e.preventDefault();move(1)}});dialog.addEventListener('close',function(){document.body.style.overflow=overflow;image.removeAttribute('src')})})();
+</script>
 </body>
 </html>
