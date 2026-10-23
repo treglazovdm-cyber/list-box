@@ -872,7 +872,7 @@
             <div class="eyebrow">Каталог</div>
             <h2>Найдите свой формат</h2>
           </div>
-          <p class="section-note">Нажмите на карточку, чтобы открыть описание позиции и подготовить обращение для заказа.</p>
+          <p class="section-note">Нажмите на карточку, чтобы открыть описание позиции и подготовить обращение для заказа. <a href="/catalog/">Все товары и услуги →</a></p>
         </div>
 
         <div class="filters" aria-label="Фильтр каталога">
@@ -1022,7 +1022,11 @@
       '</div>';
     }
 
+    function publicEscape(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function(ch) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]; }); }
     function cardMarkup(product) {
+      if (product.sku) {
+        return '<a class="product-card" href="' + publicEscape(product.url) + '"><div class="product-visual"><img src="' + publicEscape(product.photos[0]) + '" alt="' + publicEscape(product.title) + '" loading="lazy" style="width:100%;height:340px;object-fit:contain"></div><div class="product-info"><div><h3>' + publicEscape(product.title) + '</h3><p>Артикул: ' + publicEscape(product.sku) + '</p><p>' + (product.price ? new Intl.NumberFormat("ru-RU", {style:"currency",currency:"RUB"}).format(product.price) : "Стоимость по запросу") + '</p></div><span class="round-arrow">→</span></div></a>';
+      }
       return '<a class="product-card" href="#product/' + product.id + '" aria-label="' + product.name + ', ' + product.size + '">' +
         panelMarkup(product) +
         '<div class="product-info">' +
@@ -1142,6 +1146,7 @@
     function renderRoute() {
       var match = window.location.hash.match(/^#product\/(.+)$/);
       var product = match ? products.find(function(item) { return item.id === match[1]; }) : null;
+      if (product && product.sku) { window.location.replace(product.url); return; }
       var home = document.getElementById("home");
       var detail = document.getElementById("detail");
 
@@ -1200,6 +1205,14 @@
     renderProducts("all");
     renderRoute();
     window.addEventListener("hashchange", renderRoute);
+    fetch("/api/public-catalog").then(function(r) { if (!r.ok) throw new Error("Каталог временно недоступен"); return r.json(); }).then(function(data) {
+      if (!data.managed || !Array.isArray(data.products)) return;
+      products = data.products.map(function(p) { return Object.assign({},p,{id:p.sku,name:p.title,type:p.category}); });
+      document.querySelector('.filter[data-filter="all"]').textContent = "Все позиции · " + products.length;
+      renderProducts("all");
+      if (!products.length) document.getElementById("product-grid").innerHTML='<p>Каталог обновляется. Свяжитесь с менеджером для заказа.</p>';
+      if (/^#product\//.test(window.location.hash)) window.location.replace("/catalog/");
+    }).catch(function() { /* Static catalogue remains available during initial connection. */ });
   </script>
 </body>
 </html>
